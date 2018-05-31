@@ -1,12 +1,12 @@
 {
-  "name": "airequest",
+  "name": "jsrequest",
   "version": "1.0.0",
   "description": "simple request module",
-  "main": "dist/airequest.cjs.js",
-  "module": "dist/airequest.esm.js",
-  "browser": "dist/airequest.umd.js",
-  "globals" : {   
-      "axios" : "axios"
+  "main": "dist/jsrequest.cjs.js",
+  "module": "dist/jsrequest.esm.js",
+  "browser": "dist/jsrequest.umd.js",
+  "globals": {
+    "axios": "axios"
   },
   "scripts": {
     "build": "rollup -c"
@@ -15,11 +15,14 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "rollup-plugin-commonjs": "^9.1.3",
+    "rollup-plugin-flow": "^1.1.1",
     "rollup-plugin-json": "^3.0.0",
     "rollup-plugin-node-resolve": "^3.3.0",
-    "rollup-plugin-commonjs": "^9.1.3"
+    "rollup-plugin-terser": "^1.0.1",
+    "rollup-plugin-uglify": "^4.0.0"
   },
   "dependencies": {
-    "axios": "^0.18.0"   
+    "axios": "^0.18.0"
   }
 }
