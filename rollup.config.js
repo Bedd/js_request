@@ -1,6 +1,8 @@
 // rollup.config.js
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
+import babel from 'rollup-plugin-babel';
+import babelrc from 'babelrc-rollup';
 import flow from 'rollup-plugin-flow';
 import {terser}  from 'rollup-plugin-terser';
 
@@ -24,8 +26,12 @@ export default [
                     moduleDirectory: 'node_modules'
                 }
             }),            
+
             commonjs(),
+            babel(babelrc()),
             terser(),
+
+            
         ],
         // indicate which modules should be treated as external
         external: ['axios']
@@ -41,7 +47,9 @@ export default [
                     moduleDirectory: 'node_modules'
                 }
             }),
+
             commonjs(),
+            babel(babelrc()),
             terser(),
             
         ],
