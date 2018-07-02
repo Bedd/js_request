@@ -30,7 +30,7 @@ function jsRequest() {
 
   const setBaseUrl = (baseUrl : string) => {
     conf.baseURL = baseUrl;    
-  }
+  };
 
   const makeRequest = (method, ...rest) : Promise<mixed>   => {    
     
