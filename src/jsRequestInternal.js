@@ -1,8 +1,5 @@
 // @flow
 
-import axios from 'axios';
-
-                  
 type queryConfig = {|
     params : {
       [key: string] : string | number
@@ -19,7 +16,7 @@ type queryConfig = {|
   };
      
 
-function jsRequest() {
+function jsRequestInternal(axios) {
 
   let tokenFkt;
   const conf : requestConfig = {};
@@ -107,6 +104,6 @@ function jsRequest() {
   };
 }
 
-let instance = jsRequest();
+// /let instance = jsRequestInternal();
 
-export default instance;
+export default jsRequestInternal;
