@@ -1,5 +1,5 @@
 // @flow
-import type {bodyConfig, queryConfig, requestConfig} from './types';
+import type { bodyConfig, queryConfig, requestConfig } from './types';
 
 function jsRequestInternal(axios) {
 
@@ -14,14 +14,14 @@ function jsRequestInternal(axios) {
   };
 
   const setBaseUrl = (baseUrl : string) => {
-    conf.baseURL = baseUrl;    
+    conf.baseURL = baseUrl;
   };
 
   const setOverride = (overrride : boolean) => {
     overrideMethods = overrride;
   };
 
-  const makeRequest = (method, ...rest) : Promise<mixed>   => {    
+  const makeRequest = (method, ...rest) : Promise<mixed> => {
     
     if (typeof tokenFkt !== 'undefined') {
       const headers = {};
@@ -66,31 +66,31 @@ function jsRequestInternal(axios) {
 
   return {
 
-      setTokenFkt : (tokenFkt : Function) => setTokenFkt(tokenFkt),
-      setBaseUrl : (baseUrl : string) => setBaseUrl(baseUrl),
-      setOverride : (override : boolean) => setOverride(override),
+    setTokenFkt : (tokenFkt : Function) => setTokenFkt(tokenFkt),
+    setBaseUrl : (baseUrl : string) => setBaseUrl(baseUrl),
+    setOverride : (override : boolean) => setOverride(override),
 
     /**
-     * 
+     *
      * Sendet GET request
      * @returns Promise-based Antwort
      */
-    get: (url : string, config? : queryConfig) : Promise<mixed>  => makeRequest('get', url, config),
+    get: (url : string, config? : queryConfig) : Promise<mixed> => makeRequest('get', url, config),
     /**
      * Sendet DELETE request
      * @returns Promise-based Antwort
-     */ 
-    delete: (url  :string, config? : queryConfig) : Promise<mixed>  => makeRequest('delete', url, config),
+     */
+    delete: (url :string, config? : queryConfig) : Promise<mixed> => makeRequest('delete', url, config),
     /**
      * Sendet HEAD request
      * @returns Promise-based Antwort
      */
-    head: (url  :string, config? : queryConfig) : Promise<mixed> => makeRequest('head', url, config),
+    head: (url :string, config? : queryConfig) : Promise<mixed> => makeRequest('head', url, config),
     /**
      * Sendet POST request
      * @returns Promise-based Antwort
      */
-    post: (url  :string, body: bodyConfig, config? : queryConfig) : Promise<mixed> => makeRequest('post', url, body, config),
+    post: (url :string, body: bodyConfig, config? : queryConfig) : Promise<mixed> => makeRequest('post', url, body, config),
     /**
      * Sendet PUT request
      * @returns Promise-based Antwort
@@ -100,7 +100,7 @@ function jsRequestInternal(axios) {
      * Sendet PATCH request
      * @returns Promise-based Antwort
      */
-    patch: (url : string, body : bodyConfig, config? : queryConfig) : Promise<mixed>  => makeRequest('patch', url, body, config)
+    patch: (url : string, body : bodyConfig, config? : queryConfig) : Promise<mixed> => makeRequest('patch', url, body, config)
   };
 }
 
