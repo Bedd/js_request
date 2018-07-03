@@ -1,20 +1,5 @@
 // @flow
-
-type queryConfig = {|
-    params : {
-      [key: string] : string | number
-    }
-  |};
-  type bodyConfig = {
-    [key: string] : string | number
-  };
-  type requestConfig = {
-    baseURL: string,
-    headers? : {
-      [key: string] : string | number
-    }
-  };
-     
+import type {bodyConfig, queryConfig, requestConfig} from './types';
 
 function jsRequestInternal(axios) {
 

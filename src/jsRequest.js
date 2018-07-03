@@ -1,16 +1,8 @@
 // @flow
 import axios from 'axios';
 import jsRequestInternal from './jsRequestInternal';
+import type {bodyConfig, queryConfig} from './types';
 
-
-type queryConfig = {|
-    params : {
-        [key: string] : string | number
-    }
-|};
-type bodyConfig = {
-    [key: string] : string | number
-};
 
 const jsRequest = () => {
     const jsrequest = jsRequestInternal(axios);
