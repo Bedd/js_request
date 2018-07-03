@@ -24,7 +24,7 @@ function jsRequestInternal(axios) {
   const makeRequest = (method, ...rest) : Promise<mixed> => {
     
     if (typeof tokenFkt !== 'undefined') {
-      const headers = {};
+      const headers = conf.headers ? conf.headers : {};
       headers['Authorization'] = 'Bearer ' + tokenFkt();
       conf.headers = headers;
     } else {
@@ -32,7 +32,7 @@ function jsRequestInternal(axios) {
     }
 
     if (overrideMethods) {
-      const headers = {};
+      const headers = conf.headers ? conf.headers : {};
       headers['X-HTTP-Method-Override'] = method.toUpperCase();
       conf.headers = headers;
       method = 'post';
