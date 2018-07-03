@@ -47,7 +47,7 @@ const createGetSpy = () => {
     return axiosMock;
 };
 
-describe('jsRequestInterna', () => {
+describe('jsRequestInternal', () => {
 
     const testCases = [
         {url : 'testUrl.com' , data :  { someData : 'test'} },
