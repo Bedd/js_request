@@ -224,9 +224,32 @@ describe('jsRequestInterna', () => {
     });
 
     it('adds the right header if provided via config', () => {
-        /*const factory = mockFactory();
+        const factory = mockFactory();
+
         const axiosMock = factory.getAxiosMock();
-        const g*/
+
+        const getStub = factory.getGetStub();
+        const instance = jsRequestInternal(axiosMock);
+
+        const callConfig = {
+            headers : {
+                someNewHeader : 'someCustomHeaderValue'
+            }
+        };
+
+        instance.setBaseUrl(baseUrl);
+
+        for (const test of testCases) {
+            instance.get(test.url, callConfig);
+            expect(getStub.calledWith(test.url, callConfig)).to.eq(true)
+        }
+
+
+
     })
+
+    /*it('allows for the override of http-methods via configuration property', () => {
+
+    })*/
 
 });
