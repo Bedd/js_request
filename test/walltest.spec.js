@@ -49,6 +49,7 @@ describe('jsRequestInterna', () => {
     });
 
     describe('it calls the right axios functions', () => {
+
         const testCases = [
             {url : 'testUrl.com' , data :  { someData : 'test'} },
             {url : 'anUrl.com' , data :  { someData : true, somethingElse : 22 } },
@@ -119,7 +120,7 @@ describe('jsRequestInterna', () => {
                 expect(putStub.calledWith(test.url, test.data)).to.eq(true);
                 i++;
             }
-        })
+        });
         it('calls the delete function', () => {
             const axiosMock = createAxiosMock();
             const deleteStub = sinon.stub();
@@ -134,8 +135,40 @@ describe('jsRequestInterna', () => {
                 expect(deleteStub.calledWith(test.url)).to.eq(true);
                 i++;
             }
+        });
+        it('calls the head function', () => {
+            const axiosMock = createAxiosMock();
+            const headStub = sinon.stub();
+            axiosMock.head = headStub;
+
+            const instance = jsRequestInternal(axiosMock);
+            let i = 1;
+            for (const test of testCases) {
+                instance.head(test.url);
+                expect(headStub.callCount).to.eq(i);
+                expect(headStub.calledWith(test.url)).to.eq(true);
+                i++;
+            }
         })
 
-    })
+    });
+
+    it('it sets the configuration correctly', () => {
+       const axiosMock = createAxiosMock();
+       const getStub = sinon.stub();
+       axiosMock.get = getStub;
+
+       const instance = jsRequestInternal(axiosMock);
+
+       const url = 'test';
+       const config = {
+         configParam1 : 'someConfig',
+         configParam2 : 'someConfig2'
+       };
+
+       instance.get(url, config);
+       expect(getStub.calledWith(url, config)).to.eq(true);
+
+    });
 
 });
