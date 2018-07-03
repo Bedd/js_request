@@ -9,7 +9,8 @@
     "axios": "axios"
   },
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "test": "./node_modules/.bin/mocha test/*.js --require babel-core/register || exit 0"
   },
   "keywords": [],
   "author": "",
