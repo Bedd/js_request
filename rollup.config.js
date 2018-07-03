@@ -11,7 +11,7 @@ import pkg from './package.json';
 
 export default [
     {        
-        input: 'src/main.js',
+        input: 'src/jsRequest.js',
         output: {
             name: pkg.name,
             file: pkg.browser,
@@ -37,7 +37,7 @@ export default [
         external: ['axios']
     },
     {
-        input: 'src/main.js',
+        input: 'src/jsRequest.js',
         external: ['axios'],
         plugins: [
             flow(),
