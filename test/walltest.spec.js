@@ -61,20 +61,6 @@ describe('jsRequestInterna', () => {
         const instance = jsRequestInternal(createGetSpy());
         expect(instance).to.deep.equal(instance);
     });
-
-    it('sets the base-url correctly', () => {
-        const factory = mockFactory();
-        const axiosMock = factory.getAxiosMock();
-        const createStub = factory.getCreateStub();
-
-        const instance = jsRequestInternal(axiosMock);
-        instance.setBaseUrl(baseUrl);
-        const config = { baseURL : baseUrl };
-        instance.get('something');
-
-        expect(createStub.calledWith(config)).to.eq(true);
-    });
-
     describe('it calls the right axios functions', () => {
 
 
@@ -177,79 +163,145 @@ describe('jsRequestInterna', () => {
         })
 
     });
+    describe('is is configurable', () => {
+        it('sets the base-url correctly', () => {
+            const factory = mockFactory();
+            const axiosMock = factory.getAxiosMock();
+            const createStub = factory.getCreateStub();
 
-    it('it sets the configuration correctly', () => {
-       const factory = mockFactory();
-
-       const axiosMock = factory.getAxiosMock();
-       const getStub = factory.getGetStub();
-
-       const instance = jsRequestInternal(axiosMock);
-
-       const url = 'test';
-       const config = {
-         configParam1 : 'someConfig',
-         configParam2 : 'someConfig2'
-       };
-
-       instance.get(url, config);
-       expect(getStub.calledWith(url, config)).to.eq(true);
-
-    });
-
-    it('adds the right auth header if provided a token function', () =>{
-        const factory = mockFactory();
-
-        const axiosMock = factory.getAxiosMock();
-        const createStub = factory.getCreateStub();
-
-        const instance = jsRequestInternal(axiosMock);
-
-        const config = {
-            baseURL : baseUrl,
-            headers : {
-                'Authorization': 'Bearer ' + token
-            }
-        };
-
-        const url = 'someUrl';
-
-        for (const test of testCases) {
-            instance.setTokenFkt(() => { return token });
+            const instance = jsRequestInternal(axiosMock);
             instance.setBaseUrl(baseUrl);
-            instance.get(url);
+            const config = { baseURL : baseUrl };
+            instance.get('something');
+
             expect(createStub.calledWith(config)).to.eq(true);
-        }
+        });
+        it('it sets the configuration correctly', () => {
+            const factory = mockFactory();
+
+            const axiosMock = factory.getAxiosMock();
+            const getStub = factory.getGetStub();
+
+            const instance = jsRequestInternal(axiosMock);
+
+            const url = 'test';
+            const config = {
+                configParam1 : 'someConfig',
+                configParam2 : 'someConfig2'
+            };
+
+            instance.get(url, config);
+            expect(getStub.calledWith(url, config)).to.eq(true);
+
+        });
+
+        it('adds the right auth header if provided a token function', () =>{
+            const factory = mockFactory();
+
+            const axiosMock = factory.getAxiosMock();
+            const createStub = factory.getCreateStub();
+
+            const instance = jsRequestInternal(axiosMock);
+
+            const config = {
+                baseURL : baseUrl,
+                headers : {
+                    'Authorization': 'Bearer ' + token
+                }
+            };
+
+            const url = 'someUrl';
+
+            for (const test of testCases) {
+                instance.setTokenFkt(() => { return token });
+                instance.setBaseUrl(baseUrl);
+                instance.get(url);
+                expect(createStub.calledWith(config)).to.eq(true);
+            }
+
+        });
+
+        it('adds the right header if provided via config', () => {
+            const factory = mockFactory();
+
+            const axiosMock = factory.getAxiosMock();
+
+            const getStub = factory.getGetStub();
+            const instance = jsRequestInternal(axiosMock);
+
+            const callConfig = {
+                headers : {
+                    someNewHeader : 'someCustomHeaderValue'
+                }
+            };
+
+            instance.setBaseUrl(baseUrl);
+
+            for (const test of testCases) {
+                instance.get(test.url, callConfig);
+                expect(getStub.calledWith(test.url, callConfig)).to.eq(true)
+            }
+
+
+
+        });
+
+        it('allows for the override of http-methods via configuration property', () => {
+
+            const factory = mockFactory();
+
+            const postStub = factory.getPostStub();
+            const patchStub = factory.getPatchStub();
+            const putStub = factory.getPutStub();
+            const headStub = factory.getHeadStub();
+            const deleteStub = factory.getDeleteStub();
+
+            const tests = [
+                // { method : 'put', url : 'someUrl', data : { test : 'somethign'}, stub : putStub},
+                // { method : 'patch', url : 'someUrl', data : { test : 'somethign'}, stub : patchStub },
+                { method : 'delete', url : 'someUrl', stub : deleteStub },
+                // { method : 'head', url : 'someUrl', stub : headStub }
+            ];
+
+
+            const createSub = factory.getCreateStub();
+            const axiosMock = factory.getAxiosMock();
+
+            const instance = jsRequestInternal(axiosMock);
+
+            instance.setOverride(true);
+            let i = 1;
+            for (const test of tests) {
+
+                const config = {
+                    headers : {
+                        'X-HTTP-Method-Override' : test.method.toUpperCase()
+                    }
+                };
+
+                if (test.data) {
+                    instance[test.method](test.url, test.data)
+                }
+                else {
+                    instance[test.method](test.url);
+                }
+
+                expect(postStub.callCount).to.eq(i);
+
+                expect(createSub.calledWith(config)).to.eq(true);
+
+                if (test.data) {
+                    expect(postStub.calledWith(test.url, test.data)).to.eq(true);
+                }
+                else {
+                    expect(postStub.calledWith(test.url)).to.eq(true);
+                }
+
+                i++;
+            }
+
+        })
 
     });
-
-    it('adds the right header if provided via config', () => {
-        const factory = mockFactory();
-
-        const axiosMock = factory.getAxiosMock();
-
-        const getStub = factory.getGetStub();
-        const instance = jsRequestInternal(axiosMock);
-
-        const callConfig = {
-            headers : {
-                someNewHeader : 'someCustomHeaderValue'
-            }
-        };
-
-        instance.setBaseUrl(baseUrl);
-
-        for (const test of testCases) {
-            instance.get(test.url, callConfig);
-            expect(getStub.calledWith(test.url, callConfig)).to.eq(true)
-        }
-
-
-
-    })
-
-    /*it('allows for the override of http-methods via configuration property', () => {
-
-    })*/
 
 });

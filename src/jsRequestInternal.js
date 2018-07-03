@@ -19,7 +19,10 @@ type queryConfig = {|
 function jsRequestInternal(axios) {
 
   let tokenFkt;
-  const conf : requestConfig = {};
+  const conf : requestConfig = {
+    headers : {}
+  };
+  let overrideMethods = false;
 
   const setTokenFkt = (newTokenFkt : Function) => {
     tokenFkt = newTokenFkt;
@@ -29,14 +32,25 @@ function jsRequestInternal(axios) {
     conf.baseURL = baseUrl;    
   };
 
+  const setOverride = (overrride : boolean) => {
+    overrideMethods = overrride;
+  };
+
   const makeRequest = (method, ...rest) : Promise<mixed>   => {    
     
     if (typeof tokenFkt !== 'undefined') {
-      conf.headers = {
-        'Authorization': 'Bearer ' + tokenFkt()
-      };
+      const headers = {};
+      headers['Authorization'] = 'Bearer ' + tokenFkt();
+      conf.headers = headers;
     } else {
       delete conf.headers;
+    }
+
+    if (overrideMethods) {
+      const headers = {};
+      headers['X-HTTP-Method-Override'] = method.toUpperCase();
+      conf.headers = headers;
+      method = 'post';
     }
 
     const requestInstance = axios.create(conf);
@@ -69,6 +83,7 @@ function jsRequestInternal(axios) {
 
       setTokenFkt : (tokenFkt : Function) => setTokenFkt(tokenFkt),
       setBaseUrl : (baseUrl : string) => setBaseUrl(baseUrl),
+      setOverride : (override : boolean) => setOverride(override),
 
     /**
      * 
