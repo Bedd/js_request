@@ -2,12 +2,37 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import jsRequestInternal from '../src/jsRequestInternal';
 
-const createAxiosMock = () => {
+const mockFactory = () => {
     const axiosMock = sinon.spy();
+
     const createStub = sinon.stub();
-    axiosMock.create = createStub;
     createStub.returns(axiosMock);
-    return axiosMock;
+    axiosMock.create = createStub;
+
+    const getStub = sinon.stub();
+    const postStub = sinon.stub();
+    const patchStub = sinon.stub();
+    const putStub = sinon.stub();
+    const headStub = sinon.stub();
+    const deleteStub = sinon.stub();
+
+    axiosMock.get = getStub;
+    axiosMock.post = postStub;
+    axiosMock.patch = patchStub;
+    axiosMock.put = putStub;
+    axiosMock.head = headStub;
+    axiosMock.delete = deleteStub;
+
+    return {
+        getAxiosMock : () => axiosMock,
+        getCreateStub : () => createStub,
+        getGetStub : () => getStub,
+        getPostStub : () => postStub,
+        getPutStub : () => putStub,
+        getPatchStub : () => patchStub,
+        getHeadStub : () => headStub,
+        getDeleteStub : () => deleteStub
+    };
 };
 
 const createGetSpy = () => {
@@ -24,21 +49,23 @@ const createGetSpy = () => {
 
 describe('jsRequestInterna', () => {
 
+    const testCases = [
+        {url : 'testUrl.com' , data :  { someData : 'test'} },
+        {url : 'anUrl.com' , data :  { someData : true, somethingElse : 22 } },
+        {url : 'somethingElse.com' , data :  { someData : { someMoreData : { someKey : 'someValue' } } } },
+    ];
+    const token = '123456789';
+    const baseUrl = 'http://something.com';
+
     it('is instantiable', () => {
         const instance = jsRequestInternal(createGetSpy());
         expect(instance).to.deep.equal(instance);
     });
 
     it('sets the base-url correctly', () => {
-        const axiosMock = sinon.spy();
-        const getStub = sinon.stub();
-        const createStub = sinon.stub();
-
-
-        axiosMock.get = getStub;
-        createStub.returns(axiosMock);
-        axiosMock.create = createStub;
-        const baseUrl = 'https://testUrl.com';
+        const factory = mockFactory();
+        const axiosMock = factory.getAxiosMock();
+        const createStub = factory.getCreateStub();
 
         const instance = jsRequestInternal(axiosMock);
         instance.setBaseUrl(baseUrl);
@@ -50,18 +77,12 @@ describe('jsRequestInterna', () => {
 
     describe('it calls the right axios functions', () => {
 
-        const testCases = [
-            {url : 'testUrl.com' , data :  { someData : 'test'} },
-            {url : 'anUrl.com' , data :  { someData : true, somethingElse : 22 } },
-            {url : 'somethingElse.com' , data :  { someData : { someMoreData : { someKey : 'someValue' } } } },
-        ];
 
         it('calls the get function', () => {
+            const factory = mockFactory();
 
-            const axiosMock = createAxiosMock();
-
-            const getStub = sinon.stub();
-            axiosMock.get = getStub;
+            const axiosMock = factory.getAxiosMock();
+            const getStub = factory.getGetStub();
 
             const instance = jsRequestInternal(axiosMock);
 
@@ -75,13 +96,12 @@ describe('jsRequestInterna', () => {
 
         });
         it('calls the post function', () => {
+            const factory = mockFactory();
 
-            const axiosMock = createAxiosMock();
-            const postStub = sinon.stub();
-            axiosMock.post = postStub;
+            const axiosMock = factory.getAxiosMock();
+
+            const postStub = factory.getPostStub();
             const instance = jsRequestInternal(axiosMock);
-
-
 
             let i = 1;
             for (const testCase of testCases) {
@@ -92,9 +112,10 @@ describe('jsRequestInterna', () => {
             }
         });
         it('calls the patch fucntion', () => {
-           const axiosMock = createAxiosMock();
-           const patchStub = sinon.stub();
-           axiosMock.patch = patchStub;
+           const factory = mockFactory();
+
+           const axiosMock = factory.getAxiosMock();
+           const patchStub = factory.getPatchStub();
 
            const instance = jsRequestInternal(axiosMock);
 
@@ -108,9 +129,11 @@ describe('jsRequestInterna', () => {
 
         });
         it('calls the put function', () => {
-            const axiosMock = createAxiosMock();
-            const putStub = sinon.stub();
-            axiosMock.put = putStub;
+            const factory = mockFactory();
+
+            const axiosMock = factory.getAxiosMock();
+            const putStub = factory.getPutStub();
+
             const instance = jsRequestInternal(axiosMock);
 
             let i = 1;
@@ -122,9 +145,10 @@ describe('jsRequestInterna', () => {
             }
         });
         it('calls the delete function', () => {
-            const axiosMock = createAxiosMock();
-            const deleteStub = sinon.stub();
-            axiosMock.delete = deleteStub;
+            const factory = mockFactory();
+
+            const axiosMock = factory.getAxiosMock();
+            const deleteStub = factory.getDeleteStub();
 
             const instance = jsRequestInternal(axiosMock);
 
@@ -137,9 +161,10 @@ describe('jsRequestInterna', () => {
             }
         });
         it('calls the head function', () => {
-            const axiosMock = createAxiosMock();
-            const headStub = sinon.stub();
-            axiosMock.head = headStub;
+            const factory = mockFactory();
+
+            const axiosMock = factory.getAxiosMock();
+            const headStub = factory.getHeadStub();
 
             const instance = jsRequestInternal(axiosMock);
             let i = 1;
@@ -154,9 +179,10 @@ describe('jsRequestInterna', () => {
     });
 
     it('it sets the configuration correctly', () => {
-       const axiosMock = createAxiosMock();
-       const getStub = sinon.stub();
-       axiosMock.get = getStub;
+       const factory = mockFactory();
+
+       const axiosMock = factory.getAxiosMock();
+       const getStub = factory.getGetStub();
 
        const instance = jsRequestInternal(axiosMock);
 
@@ -170,5 +196,37 @@ describe('jsRequestInterna', () => {
        expect(getStub.calledWith(url, config)).to.eq(true);
 
     });
+
+    it('adds the right auth header if provided a token function', () =>{
+        const factory = mockFactory();
+
+        const axiosMock = factory.getAxiosMock();
+        const createStub = factory.getCreateStub();
+
+        const instance = jsRequestInternal(axiosMock);
+
+        const config = {
+            baseURL : baseUrl,
+            headers : {
+                'Authorization': 'Bearer ' + token
+            }
+        };
+
+        const url = 'someUrl';
+
+        for (const test of testCases) {
+            instance.setTokenFkt(() => { return token });
+            instance.setBaseUrl(baseUrl);
+            instance.get(url);
+            expect(createStub.calledWith(config)).to.eq(true);
+        }
+
+    });
+
+    it('adds the right header if provided via config', () => {
+        /*const factory = mockFactory();
+        const axiosMock = factory.getAxiosMock();
+        const g*/
+    })
 
 });
